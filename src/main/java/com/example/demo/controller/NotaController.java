@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.Nota;
+import com.example.demo.model.negocio.Nota;
 import com.example.demo.service.NotaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -25,24 +25,18 @@ public class NotaController {
     }
 
     @GetMapping("/{notaId}")
-    public ResponseEntity<Nota> buscarNotaPorId(@PathVariable Long notaId) {
+    public ResponseEntity<Nota> getNotaPorId(@PathVariable Long notaId) {
         Nota nota = notaService.getNotaPorId(notaId);
-        if (nota != null) {
-            return ResponseEntity.ok(nota);
-        }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(nota);
     }
 
     @PutMapping("/{notaId}")
-    public ResponseEntity<Nota> atualizarNota(
+    public ResponseEntity<Nota> updateNota(
             @PathVariable Long notaId,
             @RequestBody Nota notaAtualizada
     ) {
         Nota nota = notaService.updateNota(notaId, notaAtualizada);
-        if (nota != null) {
-            return ResponseEntity.ok(nota);
-        }
-        return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(nota);
     }
 
     @DeleteMapping("/{notaId}")

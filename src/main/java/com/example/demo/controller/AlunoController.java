@@ -1,15 +1,14 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.Aluno;
-import com.example.demo.model.Curso;
+import com.example.demo.model.cadastro.Aluno;
+import com.example.demo.request.AlunoRequest;
+import com.example.demo.response.AlunoResponse;
 import com.example.demo.service.AlunoService;
-import com.example.demo.service.CursoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/alunos")
@@ -18,18 +17,18 @@ public class AlunoController {
     private AlunoService alunoService;
 
     @GetMapping
-    public List<Aluno> getAllAlunos() {
+    public List<AlunoResponse> getAllAlunos() {
         return alunoService.getAllAlunos();
     }
 
     @PostMapping
-    public Aluno createAluno(@RequestBody Aluno aluno) {
-        return alunoService.createAluno(aluno);
+    public AlunoResponse createAluno(@RequestBody AlunoRequest alunoRequest) {
+        return alunoService.createAluno(alunoRequest);
     }
 
     @PutMapping("/{alunoId}")
-    public ResponseEntity<Aluno> atualizarAluno(@PathVariable Long alunoId, @RequestBody Aluno alunoAtualizado) {
-        Aluno aluno = alunoService.updateAluno(alunoId, alunoAtualizado);
+    public ResponseEntity<AlunoResponse> atualizarAluno(@PathVariable Long alunoId, @RequestBody Aluno alunoAtualizado) {
+        AlunoResponse aluno = alunoService.updateAluno(alunoId, alunoAtualizado);
         if (aluno != null) {
             return ResponseEntity.ok(aluno);
         }

@@ -1,12 +1,13 @@
-package com.example.demo.model;
+package com.example.demo.model.cadastro;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.List;
-
 @Entity
 @Data
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Disciplina {
 
     @Id
@@ -17,5 +18,6 @@ public class Disciplina {
 
     @ManyToOne
     @JoinColumn(name = "curso_id", nullable = false)
+    @JsonBackReference
     private Curso curso;
 }

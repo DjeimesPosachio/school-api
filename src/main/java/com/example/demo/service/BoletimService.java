@@ -1,55 +1,75 @@
 package com.example.demo.service;
 
+import com.example.demo.Dto.AlunoDTO;
 import com.example.demo.Dto.BoletimDTO;
-import com.example.demo.model.Aluno;
-import com.example.demo.model.Disciplina;
-import com.example.demo.model.Nota;
+import com.example.demo.Dto.CursoDTO;
+import com.example.demo.Dto.DisciplinaDTO;
+import com.example.demo.model.cadastro.Aluno;
+import com.example.demo.model.cadastro.Curso;
+import com.example.demo.model.cadastro.Disciplina;
+import com.example.demo.model.enumeration.Status;
+import com.example.demo.model.negocio.Nota;
 import com.example.demo.repository.AlunoRepository;
 import com.example.demo.repository.CursoRepository;
 import com.example.demo.repository.DisciplinaRepository;
+import com.example.demo.repository.NotaRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class BoletimService {
-    private final AlunoRepository alunoRepository;
-    private final CursoRepository cursoRepository;
-    private final DisciplinaRepository disciplinaRepository;
 
-    public BoletimService(AlunoRepository alunoRepository, CursoRepository cursoRepository, DisciplinaRepository disciplinaRepository) {
-        this.alunoRepository = alunoRepository;
-        this.cursoRepository = cursoRepository;
-        this.disciplinaRepository = disciplinaRepository;
-    }
+    @Autowired
+    private NotaRepository notaRepository;
+    @Autowired
+    private AlunoRepository alunoRepository;
+    @Autowired
+    private CursoRepository cursoRepository;
+    @Autowired
+    private DisciplinaRepository disciplinaRepository;
 
     public List<BoletimDTO> gerarBoletim(Long alunoId) {
         Aluno aluno = alunoRepository.findById(alunoId)
                 .orElseThrow(() -> new NoSuchElementException("Aluno não encontrado"));
 
-        List<Disciplina> disciplinasDoCurso = aluno.getCurso().getDisciplinas();
-        List<BoletimDTO> boletim = new ArrayList<>();
+        List<Disciplina> disciplinas = new ArrayList<>();
 
-        for (Disciplina disciplina : disciplinasDoCurso) {
-            double notaAluno = obterNotaAlunoNaDisciplina(aluno, disciplina);
-            String status = notaAluno >= 7.0 ? "Aprovado" : "Reprovado";
+        aluno.getCursos().forEach(alunoCurso -> {
+            disciplinas.addAll(alunoCurso.getCurso().getDisciplinas());
+        });
 
-            BoletimDTO boletimDTO = new BoletimDTO(aluno, aluno.getCurso(), disciplina, notaAluno, status);
-            boletim.add(boletimDTO);
+        List<Nota> notasAluno = notaRepository.findByAluno(aluno);
+
+        List<BoletimDTO> boletins = new ArrayList<>();
+
+        for (Disciplina disciplina : disciplinas) {
+            Nota notaDisciplina = notasAluno.stream().filter(na -> na.getDisciplina().equals(disciplina)).findFirst().orElse(null);
+
+            boletins.add(BoletimDTO.builder()
+                    .aluno(new AlunoDTO().converter(aluno))
+                    .curso(new CursoDTO().converter(disciplina.getCurso()))
+                    .disciplina(new DisciplinaDTO().converter(disciplina))
+                    .nota(notaDisciplina != null ? notaDisciplina.getValor() : null)
+                    .status(notaDisciplina != null ? (notaDisciplina.getValor() >= 7 ? Status.APROVADO : Status.REPROVADO) : Status.ATIVO)
+                    .build());
         }
 
-        return boletim;
+        return boletins;
     }
 
     private double obterNotaAlunoNaDisciplina(Aluno aluno, Disciplina disciplina) {
-        Optional<Nota> notaDoAlunoNaDisciplina = disciplina.getNotas().stream()
-                .filter(nota -> nota.getAluno().equals(aluno))
-                .findFirst();
-
-        return notaDoAlunoNaDisciplina.map(Nota::getValor).orElse(0.0);
+//        Optional<Nota> notaDoAlunoNaDisciplina = disciplina.getNotas().stream()
+//                .filter(nota -> nota.getAluno().equals(aluno))
+//                .findFirst();
+//
+//        return notaDoAlunoNaDisciplina.map(Nota::getValor).orElse(0.0);
+        return 0;
     }
 }
 

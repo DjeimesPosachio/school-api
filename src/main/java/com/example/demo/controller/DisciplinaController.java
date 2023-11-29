@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.Disciplina;
+import com.example.demo.model.cadastro.Disciplina;
 import com.example.demo.service.DisciplinaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

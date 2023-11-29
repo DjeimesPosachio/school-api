@@ -1,12 +1,15 @@
 package com.example.demo.service;
 
-import com.example.demo.model.Nota;
+import com.example.demo.model.negocio.Nota;
 import com.example.demo.repository.AlunoRepository;
 import com.example.demo.repository.NotaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static java.util.Objects.isNull;
+import static org.springframework.util.StringUtils.isEmpty;
 
 @Service
 public class NotaService {
@@ -21,19 +24,12 @@ public class NotaService {
     }
 
     public Nota createNota(Nota nota) {
-        if (nota.getValor() >= 0 && nota.getValor() <= 10) {
-            return notaRepository.save(nota);
-        }
-        // Implemente lógica para lidar com a nota inválida, se necessário
-        return null;
+        validate(nota);
+        return notaRepository.save(nota);
     }
 
     public Nota getNotaPorId(Long notaId) {
         return notaRepository.findById(notaId).orElse(null);
-    }
-
-    public List<Nota> getTodasNotas() {
-        return notaRepository.findAll();
     }
 
     public Nota updateNota(Long notaId, Nota notaAtualizada) {
@@ -51,10 +47,22 @@ public class NotaService {
 
     public boolean deleteNota(Long notaId) {
         Nota nota = notaRepository.findById(notaId).orElse(null);
-        if (nota != null) {
-            notaRepository.delete(nota);
-            return true;
-        }
-        return false;
+        validate(nota);
+        notaRepository.delete(nota);
+        return true;
+    }
+
+    private void validate(Nota nota) {
+        if (isNull(nota))
+            throw new RuntimeException("Nota não cadastrada");
+
+        if (isNull(nota.getValor()))
+            throw new RuntimeException("Valor da nota deve ser informada");
+
+        if (nota.getValor() < 0 || nota.getValor() > 10)
+            throw new RuntimeException("Valor da nota deve ser positivo e até 10");
+
+        if (notaRepository.existsByAlunoAndDisciplina(nota.getAluno(), nota.getDisciplina()))
+            throw new RuntimeException("Nota já informada para o aluno e disciplina");
     }
 }
