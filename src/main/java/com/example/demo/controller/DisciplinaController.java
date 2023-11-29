@@ -47,11 +47,10 @@ public class DisciplinaController {
 
     @DeleteMapping("/{disciplinaId}")
     public ResponseEntity<Void> excluirDisciplina(@PathVariable Long disciplinaId) {
-        boolean excluiu = disciplinaService.deleteDisciplina(disciplinaId);
-        if (excluiu) {
+        boolean delete = disciplinaService.deleteDisciplina(disciplinaId);
+        if (delete) {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
     }
-
 }

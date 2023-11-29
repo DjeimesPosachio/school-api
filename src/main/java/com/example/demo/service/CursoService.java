@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CursoService {
@@ -25,15 +26,18 @@ public class CursoService {
     }
 
     public boolean deleteCurso(Long cursoId) {
-        Curso curso = cursoRepository.findById(cursoId).orElse(null);
-        if (curso != null) {
+        Optional<Curso> optionalCurso = cursoRepository.findById(cursoId);
+        if (optionalCurso.isPresent()) {
+            Curso curso = optionalCurso.get();
             cursoRepository.delete(curso);
             return true;
         }
         return false;
     }
 
+
     public Curso getCursoPorId(Long cursoId) {
         return cursoRepository.findById(cursoId).orElse(null);
     }
+
 }

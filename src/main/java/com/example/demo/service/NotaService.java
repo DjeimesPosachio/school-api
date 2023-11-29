@@ -1,6 +1,5 @@
 package com.example.demo.service;
 
-import com.example.demo.model.Aluno;
 import com.example.demo.model.Nota;
 import com.example.demo.repository.AlunoRepository;
 import com.example.demo.repository.NotaRepository;
@@ -57,14 +56,5 @@ public class NotaService {
             return true;
         }
         return false;
-    }
-
-    public double calcularMediaDoAluno(Long alunoId) {
-        Aluno aluno = alunoRepository.findById(alunoId).orElse(null);;
-
-        if (aluno != null) {
-            return aluno.calcularMedia();
-        }
-        return 0.0;
     }
 }

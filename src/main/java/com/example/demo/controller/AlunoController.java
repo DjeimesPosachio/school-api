@@ -1,12 +1,15 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.Aluno;
+import com.example.demo.model.Curso;
 import com.example.demo.service.AlunoService;
+import com.example.demo.service.CursoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/alunos")
