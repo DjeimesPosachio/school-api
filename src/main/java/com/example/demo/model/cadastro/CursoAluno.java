@@ -5,19 +5,17 @@ import lombok.Data;
 
 @Entity
 @Data
-public class Nota {
+public class CursoAluno {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "aluno_id")
+    @JoinColumn(name = "aluno_id", nullable = false)
     private Aluno aluno;
 
     @ManyToOne
-    @JoinColumn(name = "disciplina_id")
-    private Disciplina disciplina;
-
-    private double valor;
-
+    @JoinColumn(name = "curso_id", nullable = false)
+    private Curso curso;
 }
